@@ -77,6 +77,8 @@ int main(int argc, char **argv)
     /* schedule tasks */
     while ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) <= nnodes)) {
         printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
+        node_mgr_print(n);
+        task_mgr_print(t);
 
         /* task available, node available -> launch task */
         if ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) > 0)) {
@@ -85,6 +87,14 @@ int main(int argc, char **argv)
                 break;
             }
         }
+       
+        /* process pending events */
+        if (node_mgr_schedule(n)) continue;
+        sleep(1);
+    }
+    /* wait for remaining calculations to complete */
+    while (node_mgr_nidle(n) < nnodes) {
+        printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
        
         /* process pending events */
         if (node_mgr_schedule(n)) continue;
