@@ -72,6 +72,7 @@ int main(int argc, char **argv)
     nnodes = node_mgr_nall(n);
     printf("Distributing tasks to %d processors.\n",nnodes);
     node_mgr_print(n);
+    printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
 
     /* schedule tasks */
     while ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) < nnodes)) {
