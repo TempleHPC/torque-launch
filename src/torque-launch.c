@@ -75,6 +75,7 @@ int main(int argc, char **argv)
 
     /* schedule tasks */
     while ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) < nnodes)) {
+        printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
 
         /* task available, node available -> launch task */
         if ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) > 0)) {

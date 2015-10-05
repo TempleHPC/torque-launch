@@ -79,13 +79,15 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
             break;
 
     id = n->nodeid[i];
+    t->nodeid = id;
+    n->nrun++;
     n->node[i].status = NODE_EXEC;
     n->node[i].task = t;
-    t->nodeid = id;
     rv = tm_spawn(3,job,NULL,id,&(t->taskid),&(n->node[i].event));
     printf("Launching task on node %d: event=%d cmd:%s",
            id,n->node[i].event,t->cmd);
-    if (rv == TM_SUCCESS) return id;
+    if (rv == TM_SUCCESS)
+        return id;
     else return TM_ERROR_NODE;
 }
 
@@ -118,6 +120,7 @@ int node_mgr_schedule(node_mgr_t *n)
 
             case NODE_BUSY:     /* task completed */
                 n->node[i].status = NODE_IDLE;
+                n->nrun--;
                 task_done(t);
                 break;
 
