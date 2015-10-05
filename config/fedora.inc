@@ -1,7 +1,7 @@
 # -*- makefile -*-
 # configuration for Fedora Linux with distribution provided Torque RPMs.
 CC=gcc
-CPPFLAGS=
+CPPFLAGS= -I/usr/include/torque
 ARCHFLAGS= -g
 GENFLAGS= 
 OPTFLAGS=  -O
