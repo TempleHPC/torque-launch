@@ -41,6 +41,7 @@ node_mgr_t *node_mgr_init()
     }
 
     tm_nodeinfo(&(n->nodeid),&(n->nall));
+    n->nrun = 0;
     n->node = (node_t *)calloc(n->nall,sizeof(node_t));
     if (n->node == NULL) {
         tm_finalize();
@@ -145,7 +146,7 @@ int node_mgr_nall(node_mgr_t *n)
 int node_mgr_nidle(node_mgr_t *n)
 {
     if (n == NULL) return 0;
-    return n->nall - n->nrun;
+    return (n->nall - n->nrun);
 }
 
 
