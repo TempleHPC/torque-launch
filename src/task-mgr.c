@@ -1,4 +1,10 @@
 
+/*
+ * Torque task list launcher tool.
+ *
+ * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ */
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -108,6 +114,7 @@ void task_mgr_print(task_mgr_t *t)
                status[t->task[i].status],t->task[i].cmd);
     }
 }
+
 /*
  * Local Variables:
  * c-basic-offset: 4

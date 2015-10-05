@@ -16,6 +16,7 @@ int main(int argc, char **argv)
 {
     FILE *fp;
     task_mgr_t *t;
+    node_mgr_t *n;
     int i,nlines;
     const char *ptr;
     char linebuf[LINEBUFSZ];
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
 
     fp = fopen(argv[1],"r");
     if (!fp) {
-        perror("Error: could not open job list file");
+        perror("Error opening job list file:");
         return 2;
     }
 
@@ -38,27 +39,35 @@ int main(int argc, char **argv)
             ++nlines;
     }
 
+    /* initialize task manager */
     t = task_mgr_init(nlines);
     if (t == NULL) {
-        printf("Error allocating internal data for %d tasks\n",nlines);
+        printf("Error allocating internal data for %d tasks.\n",nlines);
         return 3;
     }
-
     rewind(fp);
     for (i = 0; i < nlines; ++i) {
         ptr = fgets(linebuf,LINEBUFSZ,fp);
         if (ptr == NULL) break;
         if (task_mgr_add(t,ptr) != 0) {
-            printf("Error adding line %d of %d to task list\n",i+1,nlines);
+            printf("Error adding line %d of %d to task list.\n",i+1,nlines);
             task_mgr_exit(t);
             return 4;
         }
     }
     fclose(fp);
 
-    printf("Found %d tasks in task list file '%s'\n",
+    printf("Found %d tasks in task list file '%s'.\n",
            task_mgr_nall(t),argv[1]);
     /* task_mgr_print(t); */
+
+    /* initialize node manager */
+    n = node_mgr_init();
+    if (n == NULL) {
+        printf("Error allocating nodes for task processing.\n");
+        task_mgr_exit(t);
+        return 5;
+    }
     return 0;
 }
 

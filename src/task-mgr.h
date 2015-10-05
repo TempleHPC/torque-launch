@@ -1,12 +1,21 @@
+
+/*
+ * Torque task list launcher tool.
+ *
+ * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ */
+
 /* API for managing the task list */
+
 #ifndef TL_TASK_MGR_H
 #define TL_TASK_MGR_H
 
-#include <torque/tm.h>
+#include <tm.h>
 
 typedef struct {
     const char *cmd;
     int status;
+    int exitval;
     tm_node_id nodeid;
     tm_task_id taskid;
 } task_t;
