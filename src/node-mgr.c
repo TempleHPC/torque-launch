@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tm.h>
 
+#include "torque.h"
 #include "node-mgr.h"
 
 #define NODE_IDLE 0

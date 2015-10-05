@@ -10,7 +10,7 @@
 #ifndef TL_TASK_MGR_H
 #define TL_TASK_MGR_H
 
-#include <tm.h>
+#include "torque.h"
 
 typedef struct {
     const char *cmd;

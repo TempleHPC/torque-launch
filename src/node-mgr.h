@@ -10,7 +10,7 @@
 #ifndef TL_NODE_MGR_H
 #define TL_NODE_MGR_H
 
-#include <tm.h>
+#include "torque.h"
 #include "task-mgr.h"
 
 typedef struct {
