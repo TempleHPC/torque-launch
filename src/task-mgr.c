@@ -115,6 +115,16 @@ void task_mgr_print(task_mgr_t *t)
     }
 }
 
+
+void task_done(task_t *t)
+{
+    if (t == NULL) return;
+    if (t->exitval != 0)
+        t->status = TASK_FAILED;
+    else
+        t->status = TASK_COMPLETE;
+}
+
 /*
  * Local Variables:
  * c-basic-offset: 4

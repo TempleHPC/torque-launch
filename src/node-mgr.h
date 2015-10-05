@@ -49,19 +49,19 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t);
  * \param t node list struct allocated by node_mgr_init
  * \return number of nodes
  */
-int node_mgr_nall(node_mgr_t *t);
+int node_mgr_nall(node_mgr_t *n);
 
 /*! Return number of idle nodes in node list
  * \param t node list struct allocated by node_mgr_init
  * \return number of nodes
  */
-int node_mgr_nidle(node_mgr_t *t);
+int node_mgr_nidle(node_mgr_t *n);
 
 /*! Process pending Torque events
  * \param t node list struct allocated by node_mgr_init
  * \return 1 if event processed, 0 if no event was pending
  */
-void node_mgr_event(node_mgr_t *t);
+int node_mgr_schedule(node_mgr_t *n);
 
 /*! Print node list
  * \param t node list struct allocated by node_mgr_init

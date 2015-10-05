@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
 
 #include "task-mgr.h"
 #include "node-mgr.h"
@@ -17,7 +18,7 @@ int main(int argc, char **argv)
     FILE *fp;
     task_mgr_t *t;
     node_mgr_t *n;
-    int i,nlines;
+    int i,nlines,nnodes;
     const char *ptr;
     char linebuf[LINEBUFSZ];
 
@@ -68,6 +69,31 @@ int main(int argc, char **argv)
         task_mgr_exit(t);
         return 5;
     }
+    nnodes = node_mgr_nall(n);
+    printf("Distributing tasks to %d processors.\n",nnodes);
+    node_mgr_print(n);
+
+    /* schedule tasks */
+    while ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) < nnodes)) {
+
+        /* task available, node available -> launch task */
+        if ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) > 0)) {
+            if (node_mgr_run(n,task_mgr_next(t)) == TM_ERROR_NODE) {
+                printf("Error scheduling pending task. Aborting\n");
+                break;
+            }
+        }
+       
+        /* process pending events */
+        if (node_mgr_schedule(n)) continue;
+        sleep(10);
+        node_mgr_print(n);
+        task_mgr_print(t);
+    }
+
+    /* shut down and clean up */
+    node_mgr_exit(n);
+    task_mgr_exit(t);
     return 0;
 }
 

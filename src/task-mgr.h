@@ -68,6 +68,11 @@ task_t *task_mgr_next(task_mgr_t *t);
  */
 void task_mgr_print(task_mgr_t *t);
 
+/*! Change status of completed task
+ * \param t task list element
+ */
+void task_done(task_t *t);
+
 
 #endif
 
