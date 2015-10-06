@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "torque.h"
 #include "node-mgr.h"
@@ -67,13 +68,22 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
 {
     int i, rv;
     tm_node_id id;
+    char *wdcmd;
     char *job[3];
 
     if ((n == NULL) || (t == NULL)) return TM_ERROR_NODE;
 
+    wdcmd = (char *)malloc(4096);
+    if (wdcmd == NULL) return TM_ERROR_NODE;
+    wdcmd[0] = '\0';
+    strcat(wdcmd,"cd ");
+    getcwd(wdcmd+3,2048);
+    strcat(wdcmd," ; ");
+    strcat(wdcmd,t->cmd);
+
     job[0] = (char *)"/bin/sh";
     job[1] = (char *)"-c";
-    job[2] = (char *)t->cmd;
+    job[2] = wdcmd;
 
     for (i = 0; i < n->nall; ++i)
         if (n->node[i].status == NODE_IDLE)
@@ -85,6 +95,7 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
     n->node[i].status = NODE_EXEC;
     n->node[i].task = t;
     rv = tm_spawn(3,job,NULL,id,&(t->taskid),&(n->node[i].event));
+    free((void *)wdcmd);
 
     if (rv == TM_SUCCESS)
         return id;
