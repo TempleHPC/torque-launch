@@ -85,8 +85,7 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
     n->node[i].status = NODE_EXEC;
     n->node[i].task = t;
     rv = tm_spawn(3,job,NULL,id,&(t->taskid),&(n->node[i].event));
-    printf("Launching task on node %d: event=%d cmd:%s",
-           id,n->node[i].event,t->cmd);
+
     if (rv == TM_SUCCESS)
         return id;
     else return TM_ERROR_NODE;
@@ -100,17 +99,15 @@ int node_mgr_schedule(node_mgr_t *n)
     if (n == NULL) return 0;
 
     rv = tm_poll(TM_NULL_EVENT,&event,0,&i);
-    printf("Poll returns: rv=%d  event=%d  errno=%d\n",rv,event,i);
+
     if (rv != TM_SUCCESS) return 0;
     if (event == TM_NULL_EVENT) return 0;
 
     /* look for node matching the reported event */
     for (i = 0; i < n->nall; ++i) {
+
         if (n->node[i].event == event) {
             task_t *t = n->node[i].task;
-
-            printf("Event %d matches node %d  taskid %d\n",
-                   event,n->nodeid[i],t->taskid);
 
             switch (n->node[i].status) {
 

@@ -11,7 +11,11 @@
 #include "task-mgr.h"
 #include "node-mgr.h"
 
+/** maximum length of line in joblist file */
 #define LINEBUFSZ 2048
+
+/** sleep time in seconds between scheduling/polling */
+#define SCHEDULE_INTERVAL 2
 
 int main(int argc, char **argv)
 {
@@ -57,10 +61,8 @@ int main(int argc, char **argv)
         }
     }
     fclose(fp);
-
     printf("Found %d tasks in task list file '%s'.\n",
            task_mgr_nall(t),argv[1]);
-    /* task_mgr_print(t); */
 
     /* initialize node manager */
     n = node_mgr_init();
@@ -71,14 +73,9 @@ int main(int argc, char **argv)
     }
     nnodes = node_mgr_nall(n);
     printf("Distributing tasks to %d processors.\n",nnodes);
-    node_mgr_print(n);
-    printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
 
-    /* schedule tasks */
-    while ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) <= nnodes)) {
-        printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
-        node_mgr_print(n);
-        task_mgr_print(t);
+    /* schedule tasks to node when they become available */
+    while (task_mgr_todo(t) > 0) {
 
         /* task available, node available -> launch task */
         if ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) > 0)) {
@@ -90,17 +87,14 @@ int main(int argc, char **argv)
        
         /* process pending events */
         if (node_mgr_schedule(n)) continue;
-        sleep(1);
+
+        sleep(SCHEDULE_INTERVAL);
     }
+
     /* wait for remaining calculations to complete */
     while (node_mgr_nidle(n) < nnodes) {
-        printf("Todo=%d  Nidle=%d\n",task_mgr_todo(t), node_mgr_nidle(n));
-       
-        /* process pending events */
         if (node_mgr_schedule(n)) continue;
-        sleep(10);
-        node_mgr_print(n);
-        task_mgr_print(t);
+        sleep(SCHEDULE_INTERVAL);
     }
 
     /* shut down and clean up */
