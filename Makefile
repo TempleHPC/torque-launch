@@ -13,7 +13,7 @@ $(ARCHES) :
 	make -C Obj_$@ -f ../config/Common.mk ARCH=$@
 
 clean:
-	rm -rf Obj_* perf.data*
+	rm -rf Obj_* perf.data* torque-launch
 
 spotless: clean
 	rm -f *~ */*~

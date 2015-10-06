@@ -22,7 +22,11 @@ OBJ=$(SRC:.c=.o)
 vpath %.c ../src
 vpath %.h ../src
 
-all: torque-launch
+all: torque-launch symlink
+
+symlink: torque-launch
+	rm -f ../torque-launch
+	ln -s Obj_$(ARCH)/torque-launch ../torque-launch
 
 torque-launch: $(OBJ)
 	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
@@ -30,7 +34,7 @@ torque-launch: $(OBJ)
 .depend: $(SRC)
 	$(CC) $(DEFS) $(CPPFLAGS) -MM $^ > $@
 
-.PHONY: all default
+.PHONY: all default symlink
 .SUFFIX:
 .SUFFIX: .c .o
 
