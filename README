@@ -1,0 +1,27 @@
+
+Task dispatcher to launch a list of serial tasks on a reserved
+chunk of resources through the Torque task manager library.
+
+COMPILATION
+
+make <configuration>
+
+Available configurations: fedora  (for Fedora desktops with Torque RPMs)
+                          owlsnest (for Temple's Owl's Nest HPC cluster)
+
+
+RUNNING
+
+torque-launch <tasklist file>
+
+The file will be processed line by line skipping over empty lines
+and lines with comments. Comments are prefixed by a pound sign '#'.
+The torque-launch command will distribute the individual tasks to
+the reserved CPU slots on the individual nodes of the Torque job
+and launch new tasks for as long as idle slots are available. The
+tasklist can contain (many) more tasks than Torque reservertion
+holds CPU slots. In this case the program will wait until a slot
+becomes available through a previous task finishing. The individual
+tasks are launched by passing the line of test to "/bin/sh -c";
+the shell will switch to the current working directory of the
+torque-launch command before executing a task.
