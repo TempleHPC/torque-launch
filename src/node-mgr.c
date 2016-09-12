@@ -17,6 +17,7 @@
 #define NODE_EXEC 1
 #define NODE_BUSY 2
 
+extern char ** environ;
 
 static const char *status[] = {
     "idle", "exec", "busy", NULL
@@ -94,7 +95,7 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
     n->nrun++;
     n->node[i].status = NODE_EXEC;
     n->node[i].task = t;
-    rv = tm_spawn(3,job,NULL,id,&(t->taskid),&(n->node[i].event));
+    rv = tm_spawn(3,job,environ,id,&(t->taskid),&(n->node[i].event));
     free((void *)wdcmd);
 
     if (rv == TM_SUCCESS)
