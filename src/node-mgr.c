@@ -110,7 +110,7 @@ int node_mgr_schedule(node_mgr_t *n)
 
     if (n == NULL) return 0;
 
-    rv = tm_poll(TM_NULL_EVENT,&event,0,&i);
+    rv = tm_poll(TM_NULL_EVENT,&event,1,&i);
 
     if (rv != TM_SUCCESS) return 0;
     if (event == TM_NULL_EVENT) return 0;
