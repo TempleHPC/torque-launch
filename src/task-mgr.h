@@ -2,7 +2,7 @@
 /*
  * Torque task list launcher tool.
  *
- * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ * Copyright (c) 2015,2017 Axel Kohlmeyer <akohlmey@gmail.com>
  */
 
 /* API for managing the task list */
@@ -16,6 +16,7 @@ typedef struct {
     const char *cmd;
     int status;
     int exitval;
+    int tasknum;
     tm_node_id nodeid;
     tm_task_id taskid;
 } task_t;
@@ -72,7 +73,6 @@ void task_mgr_print(task_mgr_t *t);
  * \param t task list element
  */
 void task_done(task_t *t);
-
 
 #endif
 

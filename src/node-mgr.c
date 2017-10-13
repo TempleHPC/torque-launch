@@ -2,13 +2,17 @@
 /*
  * Torque task list launcher tool.
  *
- * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ * Copyright (c) 2015,2017 Axel Kohlmeyer <akohlmey@gmail.com>
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifdef USE_SYSLOG
+#include <syslog.h>
+#endif
 
 #include "torque.h"
 #include "node-mgr.h"
@@ -17,7 +21,7 @@
 #define NODE_EXEC 1
 #define NODE_BUSY 2
 
-extern char ** environ;
+extern char **environ;
 
 static const char *status[] = {
     "idle", "exec", "busy", NULL
@@ -98,6 +102,12 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
     rv = tm_spawn(3,job,environ,id,&(t->taskid),&(n->node[i].event));
     free((void *)wdcmd);
 
+#ifdef USE_SYSLOG
+    syslog(LOG_INFO,"{\"job_id\": %s, \"event\": \"task_start\","
+           "\"task_id\": %d, \"slot_id\": %d}",
+           pbsjobid,t->tasknum,t->nodeid);
+#endif
+
     if (rv == TM_SUCCESS)
         return id;
     else return TM_ERROR_NODE;
@@ -131,6 +141,11 @@ int node_mgr_schedule(node_mgr_t *n)
             case NODE_BUSY:     /* task completed */
                 n->node[i].status = NODE_IDLE;
                 n->nrun--;
+#ifdef USE_SYSLOG
+                syslog(LOG_INFO,"{\"job_id\": %s, \"event\": \"task_done\","
+                       "\"task_id\": %d, \"slot_id\": %d}",
+                       pbsjobid,t->tasknum,t->nodeid);
+#endif
                 task_done(t);
                 break;
 

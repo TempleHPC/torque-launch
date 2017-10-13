@@ -2,7 +2,7 @@
 /*
  * Torque task list launcher tool.
  *
- * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ * Copyright (c) 2015,2017 Axel Kohlmeyer <akohlmey@gmail.com>
  */
 
 /* API for managing the compute nodes */

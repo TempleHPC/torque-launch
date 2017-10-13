@@ -1,7 +1,7 @@
 # -*- makefile -*-
 # configuration for Temple's Owl's Nest HPC cluster
 CC=gcc
-CPPFLAGS= -I/opt/torque/include
+CPPFLAGS= -I/opt/torque/include -DUSE_SYSLOG=1
 ARCHFLAGS= -g
 GENFLAGS= 
 OPTFLAGS=  -O

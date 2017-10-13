@@ -2,11 +2,16 @@
 /*
  * Torque task list launcher tool.
  *
- * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ * Copyright (c) 2015,2017 Axel Kohlmeyer <akohlmey@gmail.com>
  */
 
 #include <stdio.h>
 #include <unistd.h>
+
+#ifdef USE_SYSLOG
+#include <stdlib.h>
+#include <syslog.h>
+#endif
 
 #include "task-mgr.h"
 #include "node-mgr.h"
@@ -16,6 +21,11 @@
 
 /** sleep time in seconds between scheduling/polling */
 #define SCHEDULE_INTERVAL 2
+
+#ifdef USE_SYSLOG
+const char *logname = "torque-launch";
+const char *pbsjobid = "(unknown)";
+#endif
 
 int main(int argc, char **argv)
 {
@@ -64,6 +74,13 @@ int main(int argc, char **argv)
     printf("Found %d tasks in task list file '%s'.\n",
            task_mgr_nall(t),argv[1]);
 
+#ifdef USE_SYSLOG
+    pbsjobid = getenv("PBS_JOBID");
+    openlog(logname,LOG_PID|LOG_ODELAY,LOG_LOCAL2);
+    syslog(LOG_INFO,"{\"job_id\": %s, \"event\": \"launch\", "
+           "\"num_tasks\": %d}",pbsjobid,task_mgr_nall(t));
+#endif
+
     /* initialize node manager */
     n = node_mgr_init();
     if (n == NULL) {
@@ -100,6 +117,12 @@ int main(int argc, char **argv)
     /* shut down and clean up */
     node_mgr_exit(n);
     task_mgr_exit(t);
+
+#ifdef USE_SYSLOG
+    syslog(LOG_INFO,"{\"job_id\": %s, \"event\": \"exit\"}",pbsjobid);
+    closelog();
+#endif
+
     return 0;
 }
 

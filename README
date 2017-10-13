@@ -6,7 +6,8 @@ COMPILATION
 
 make <configuration>
 
-Available configurations: fedora  (for Fedora desktops with Torque RPMs)
+Available configurations: fedora  (for Fedora desktops with Torque RPMs,
+                                   and Temple's Owl's Nest 2 HPC cluster)
                           owlsnest (for Temple's Owl's Nest HPC cluster)
 
 

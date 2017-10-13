@@ -2,7 +2,7 @@
 /*
  * Torque task list launcher tool.
  *
- * Copyright (c) 2015 Axel Kohlmeyer <akohlmey@gmail.com>
+ * Copyright (c) 2015,2017 Axel Kohlmeyer <akohlmey@gmail.com>
  */
 
 #include <ctype.h>
@@ -73,6 +73,7 @@ int task_mgr_add(task_mgr_t *t, const char *cmd)
     t->task[n].status = TASK_PENDING;
     t->task[n].nodeid = TM_ERROR_NODE;
     t->task[n].taskid = TM_NULL_TASK;
+    t->task[n].tasknum = n;
     t->nall = n+1;
     return 0;
 }
