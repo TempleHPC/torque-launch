@@ -28,6 +28,16 @@ typedef struct {
     task_t *task;
 } task_mgr_t;
 
+/* task list sort flags */
+#define SORT_NOTSET  0
+/** process tasks in the order of the job list file (default, no-op) */
+#define SORT_FORWARD 1
+/** process tasks in reverse order of the job list file */
+#define SORT_REVERSE 2
+/** process tasks centered around task # given.
+    use middle of list unless a different task # is given */
+#define SORT_CENTER  3
+
 /*! Allocate and initialize a task list struct
  * \param num maximum number of tasks
  * \return allocated task list struct
@@ -73,6 +83,14 @@ void task_mgr_print(task_mgr_t *t);
  * \param t task list element
  */
 void task_done(task_t *t);
+
+/*! Sort list of tasks in one of several ways
+ * \param t task list struct allocated by task_mgr_init
+ * \param s sort flag, determines sort order (forward, reverse, or center)
+ * \param c center task for center sort order
+ * \return sorted task list struct
+ */
+task_mgr_t *task_mgr_sort(task_mgr_t *t, const int s, const int c);
 
 #endif
 

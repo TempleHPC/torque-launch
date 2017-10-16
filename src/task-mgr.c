@@ -126,6 +126,35 @@ void task_done(task_t *t)
         t->status = TASK_COMPLETE;
 }
 
+task_mgr_t *task_mgr_sort(task_mgr_t *t, const int s, const int c)
+{
+    task_mgr_t *tnew;
+    int i;
+
+    task_mgr_print(t);
+
+    /* no reordering needed */
+    if (s == SORT_FORWARD) return t;
+
+    /* init new task structure */
+    tnew = task_mgr_init(t->nall);
+
+    if (s == SORT_REVERSE) {
+        for (i = t->nall-1; i >= 0; --i)
+            task_mgr_add(tnew,t->task[i].cmd);
+    } else if (s == SORT_CENTER) {
+        task_mgr_add(tnew,t->task[c].cmd);
+        for (i = 1; i < t->nall; ++i) {
+            if (c-i >= 0) task_mgr_add(tnew,t->task[c-i].cmd);
+            if (c+i < t->nall) task_mgr_add(tnew,t->task[c+i].cmd);
+        }
+    }
+
+    task_mgr_print(tnew);
+    task_mgr_exit(t);
+    return tnew;
+}
+
 /*
  * Local Variables:
  * c-basic-offset: 4

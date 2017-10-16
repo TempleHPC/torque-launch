@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef USE_SYSLOG
-#include <stdlib.h>
 #include <syslog.h>
 #endif
 
@@ -22,26 +23,77 @@
 /** sleep time in seconds between scheduling/polling */
 #define SCHEDULE_INTERVAL 2
 
+
 #ifdef USE_SYSLOG
 const char *logname = "torque-launch";
 const char *pbsjobid = "(unknown)";
 #endif
+
+static int usage(const char *argv0)
+{
+    printf("\nUsage:  %s [-f|-r|-m|-c <center task #>] "
+           "[-p <checkpoint filename>] <joblist filename>\n"
+           "Meaning of flags:\n"
+           " -f   : process tasks in forward order (default)\n"
+           " -r   : process tasks in reverse order\n"
+           " -m   : process tasks starting in the middle\n"
+           " -c # : like -mid but start with task #\n"
+           " -p name : name of checkpoint file\n",argv0);
+    return 1;
+}
 
 int main(int argc, char **argv)
 {
     FILE *fp;
     task_mgr_t *t;
     node_mgr_t *n;
-    int i,nlines,nnodes;
-    const char *ptr;
+    int i,opt,sortflag,center,nlines,nnodes;
+    const char *ptr,*checkpoint;
     char linebuf[LINEBUFSZ];
 
-    if (argc != 2) {
-        printf("\nUsage:  %s <joblist filename>\n\n",argv[0]);
-        return 1;
+    if ((argc < 2) || (argc > 4))
+        return usage(argv[0]);
+
+    sortflag = SORT_NOTSET;
+    center = -1;
+
+    while ((opt = getopt(argc,argv,"frmc:p:")) != -1) {
+        switch (opt) {
+
+          case 'f':
+              if (sortflag != SORT_NOTSET) return usage(argv[0]);
+              sortflag = SORT_FORWARD;
+              break;
+
+          case 'r':
+              if (sortflag != SORT_NOTSET) return usage(argv[0]);
+              sortflag = SORT_REVERSE;
+              break;
+
+          case 'm':
+              if (sortflag != SORT_NOTSET) return usage(argv[0]);
+              sortflag = SORT_CENTER;
+              center = -1;
+              break;
+
+          case 'c':
+              if (sortflag != SORT_NOTSET) return usage(argv[0]);
+              sortflag = SORT_CENTER;
+              center = atoi(optarg);
+              break;
+
+          case 'p':
+              checkpoint = strdup(optarg);
+              break;
+
+          default:
+              return usage(argv[0]);
+        }
     }
 
-    fp = fopen(argv[1],"r");
+    if (optind >= argc) return usage(argv[0]);
+
+    fp = fopen(argv[optind],"r");
     if (!fp) {
         perror("Error opening job list file:");
         return 2;
@@ -73,6 +125,18 @@ int main(int argc, char **argv)
     fclose(fp);
     printf("Found %d tasks in task list file '%s'.\n",
            task_mgr_nall(t),argv[1]);
+
+    /* determine middle of list, if not already set */
+    if ((sortflag == SORT_CENTER) && (center < 0))
+        center = task_mgr_nall(t)/2;
+
+    if ((sortflag == SORT_CENTER) && (center >= task_mgr_nall(t))) {
+        printf("Center task %d out of range. "
+               "Switching to reverse order\n", center);
+        sortflag = SORT_REVERSE;
+    }
+
+    t = task_mgr_sort(t,sortflag,center);
 
 #ifdef USE_SYSLOG
     pbsjobid = getenv("PBS_JOBID");
