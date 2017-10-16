@@ -56,6 +56,7 @@ int main(int argc, char **argv)
 
     reorderflag = REORDER_NOTSET;
     center = -1;
+    checkpoint = NULL;
 
     while ((opt = getopt(argc,argv,"frmc:p:")) != -1) {
         switch (opt) {
@@ -171,12 +172,14 @@ int main(int argc, char **argv)
         if (node_mgr_schedule(n)) continue;
 
         sleep(SCHEDULE_INTERVAL);
+        task_mgr_chkpnt(t,checkpoint);
     }
 
     /* wait for remaining calculations to complete */
     while (node_mgr_nidle(n) < nnodes) {
         if (node_mgr_schedule(n)) continue;
         sleep(SCHEDULE_INTERVAL);
+        task_mgr_chkpnt(t,checkpoint);
     }
 
     /* shut down and clean up */
@@ -187,6 +190,7 @@ int main(int argc, char **argv)
     syslog(LOG_INFO,"{\"job_id\": %s, \"event\": \"exit\"}",pbsjobid);
     closelog();
 #endif
+    if (checkpoint != NULL) unlink(checkpoint);
 
     return 0;
 }

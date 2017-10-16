@@ -79,6 +79,12 @@ task_t *task_mgr_next(task_mgr_t *t);
  */
 void task_mgr_print(task_mgr_t *t);
 
+/*! Write task list checkpoint file
+ * \param t task list struct allocated by task_mgr_init
+ * \param n name of the checkpoint file
+ */
+void task_mgr_chkpnt(task_mgr_t *t, const char *n);
+
 /*! Change status of completed task
  * \param t task list element
  */

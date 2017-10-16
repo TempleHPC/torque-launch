@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "task-mgr.h"
 
@@ -117,6 +118,28 @@ void task_mgr_print(task_mgr_t *t)
 }
 
 
+void task_mgr_chkpnt(task_mgr_t *t, const char *n)
+{
+    FILE *fp;
+    int i;
+    if ((t == NULL) || (n == NULL)) return;
+
+    fp = fopen(n,"w");
+    if (fp != NULL) {
+        const char *prefix,*suffix;
+        time_t curtime = time(NULL);
+        printf("# torque-launch checkpoint file "
+               " written: %s\n",ctime(&curtime));
+        for (i = 0; i < t->nall; ++i) {
+            prefix = (t->task[i].status == TASK_COMPLETE) ? "# " : "";
+            suffix = (t->task[i].status == TASK_RUNNING) ? "# R" : "";
+            fprintf(fp,"%s%s%s",prefix,t->task[i].cmd,suffix);
+        }
+        fclose(fp);
+    }
+}
+
+
 void task_done(task_t *t)
 {
     if (t == NULL) return;
@@ -125,6 +148,7 @@ void task_done(task_t *t)
     else
         t->status = TASK_COMPLETE;
 }
+
 
 task_mgr_t *task_mgr_reorder(task_mgr_t *t, const int s, const int c)
 {
