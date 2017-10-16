@@ -18,6 +18,9 @@
 #define TASK_COMPLETE  2
 #define TASK_FAILED    3
 
+/** time in seconds between writing checkpoint files */
+#define CHECKPOINT_RATE 300
+
 static const char *status[] = {
     "pending", "running", "complete", "failed", NULL
 };
@@ -132,12 +135,20 @@ void task_mgr_chkpnt(task_mgr_t *t, const char *n)
 {
     FILE *fp;
     int i;
+    static time_t lasttime = 0;
+    time_t curtime;
     if ((t == NULL) || (n == NULL)) return;
+
+    /* make certain, we do not write checkpoint files too often */
+    curtime = time(NULL);
+    if ((curtime - lasttime) > CHECKPOINT_RATE)
+        lasttime = curtime;
+    else return;
 
     fp = fopen(n,"w");
     if (fp != NULL) {
         const char *prefix;
-        time_t curtime = time(NULL);
+
         fprintf(fp,"# torque-launch checkpoint written: %s",ctime(&curtime));
         for (i = 0; i < t->nall; ++i) {
             prefix = (t->task[i].status == TASK_COMPLETE) ? "# " : "";
