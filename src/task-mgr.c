@@ -126,22 +126,22 @@ void task_done(task_t *t)
         t->status = TASK_COMPLETE;
 }
 
-task_mgr_t *task_mgr_sort(task_mgr_t *t, const int s, const int c)
+task_mgr_t *task_mgr_reorder(task_mgr_t *t, const int s, const int c)
 {
     task_mgr_t *tnew;
     int i;
 
     /* no reordering needed */
-    if (s == SORT_FORWARD) return t;
+    if (s == REORDER_FORWARD) return t;
 
     /* init new task structure */
     tnew = task_mgr_init(t->nall);
 
-    if (s == SORT_REVERSE) {
+    if (s == REORDER_REVERSE) {
         printf("Processing tasks in reverse order\n");
         for (i = t->nall-1; i >= 0; --i)
             task_mgr_add(tnew,t->task[i].cmd);
-    } else if (s == SORT_CENTER) {
+    } else if (s == REORDER_CENTER) {
         printf("Processing tasks centered around task %d\n",c);
         task_mgr_add(tnew,t->task[c].cmd);
         for (i = 1; i < t->nall; ++i) {

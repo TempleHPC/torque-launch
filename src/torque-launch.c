@@ -47,38 +47,38 @@ int main(int argc, char **argv)
     FILE *fp;
     task_mgr_t *t;
     node_mgr_t *n;
-    int i,opt,sortflag,center,nlines,nnodes;
+    int i,opt,reorderflag,center,nlines,nnodes;
     const char *ptr,*checkpoint;
     char linebuf[LINEBUFSZ];
 
     if ((argc < 2) || (argc > 4))
         return usage(argv[0]);
 
-    sortflag = SORT_NOTSET;
+    reorderflag = REORDER_NOTSET;
     center = -1;
 
     while ((opt = getopt(argc,argv,"frmc:p:")) != -1) {
         switch (opt) {
 
           case 'f':
-              if (sortflag != SORT_NOTSET) return usage(argv[0]);
-              sortflag = SORT_FORWARD;
+              if (reorderflag != REORDER_NOTSET) return usage(argv[0]);
+              reorderflag = REORDER_FORWARD;
               break;
 
           case 'r':
-              if (sortflag != SORT_NOTSET) return usage(argv[0]);
-              sortflag = SORT_REVERSE;
+              if (reorderflag != REORDER_NOTSET) return usage(argv[0]);
+              reorderflag = REORDER_REVERSE;
               break;
 
           case 'm':
-              if (sortflag != SORT_NOTSET) return usage(argv[0]);
-              sortflag = SORT_CENTER;
+              if (reorderflag != REORDER_NOTSET) return usage(argv[0]);
+              reorderflag = REORDER_CENTER;
               center = -1;
               break;
 
           case 'c':
-              if (sortflag != SORT_NOTSET) return usage(argv[0]);
-              sortflag = SORT_CENTER;
+              if (reorderflag != REORDER_NOTSET) return usage(argv[0]);
+              reorderflag = REORDER_CENTER;
               center = atoi(optarg);
               break;
 
@@ -127,16 +127,17 @@ int main(int argc, char **argv)
            task_mgr_nall(t),argv[1]);
 
     /* determine middle of list, if not already set */
-    if ((sortflag == SORT_CENTER) && (center < 0))
+    if ((reorderflag == REORDER_CENTER) && (center < 0))
         center = task_mgr_nall(t)/2;
 
-    if ((sortflag == SORT_CENTER) && (center >= task_mgr_nall(t))) {
+    if ((reorderflag == REORDER_CENTER) && (center >= task_mgr_nall(t))) {
         printf("Center task %d out of range. "
                "Switching to reverse order\n", center);
-        sortflag = SORT_REVERSE;
+        reorderflag = REORDER_REVERSE;
     }
 
-    t = task_mgr_sort(t,sortflag,center);
+    /* reorder tasks, if requested */
+    t = task_mgr_reorder(t,reorderflag,center);
 
 #ifdef USE_SYSLOG
     pbsjobid = getenv("PBS_JOBID");
