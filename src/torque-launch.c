@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     const char *ptr,*checkpoint;
     char linebuf[LINEBUFSZ];
 
-    if ((argc < 2) || (argc > 4))
+    if ((argc < 2) || (argc > 6))
         return usage(argv[0]);
 
     reorderflag = REORDER_NOTSET;
@@ -93,6 +93,7 @@ int main(int argc, char **argv)
     }
 
     if (optind >= argc) return usage(argv[0]);
+    if (reorderflag == REORDER_NOTSET) reorderflag = REORDER_FORWARD;
 
     fp = fopen(argv[optind],"r");
     if (!fp) {
@@ -125,7 +126,7 @@ int main(int argc, char **argv)
     }
     fclose(fp);
     printf("Found %d tasks in task list file '%s'.\n",
-           task_mgr_nall(t),argv[1]);
+           task_mgr_nall(t),argv[optind]);
 
     /* determine middle of list, if not already set */
     if ((reorderflag == REORDER_CENTER) && (center < 0))
