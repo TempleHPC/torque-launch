@@ -133,7 +133,7 @@ void task_mgr_chkpnt(task_mgr_t *t, const char *n)
         fprintf(fp,"# torque-launch checkpoint written: %s",ctime(&curtime));
         for (i = 0; i < t->nall; ++i) {
             prefix = suffix = "";
-            cmd = task[i].cmd;
+            cmd = t->task[i].cmd;
             len = strlen(cmd);
             cmd[len] = '\0';
             if (t->task[i].status == TASK_COMPLETE)
