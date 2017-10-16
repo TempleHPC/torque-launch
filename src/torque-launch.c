@@ -160,6 +160,7 @@ int main(int argc, char **argv)
 
     /* schedule tasks to node when they become available */
     while (task_mgr_todo(t) > 0) {
+        task_mgr_chkpnt(t,checkpoint);
 
         /* task available, node available -> launch task */
         if ((task_mgr_todo(t) > 0) && (node_mgr_nidle(n) > 0)) {
@@ -171,16 +172,14 @@ int main(int argc, char **argv)
        
         /* process pending events */
         if (node_mgr_schedule(n)) continue;
-
         sleep(SCHEDULE_INTERVAL);
-        task_mgr_chkpnt(t,checkpoint);
     }
 
     /* wait for remaining calculations to complete */
     while (node_mgr_nidle(n) < nnodes) {
+        task_mgr_chkpnt(t,checkpoint);
         if (node_mgr_schedule(n)) continue;
         sleep(SCHEDULE_INTERVAL);
-        task_mgr_chkpnt(t,checkpoint);
     }
 
     /* shut down and clean up */
