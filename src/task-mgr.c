@@ -127,13 +127,24 @@ void task_mgr_chkpnt(task_mgr_t *t, const char *n)
     fp = fopen(n,"w");
     if (fp != NULL) {
         const char *prefix,*suffix;
+        char *cmd;
+        size_t len;
         time_t curtime = time(NULL);
-        fprintf(fp,"# torque-launch checkpoint file "
-               " written: %s\n",ctime(&curtime));
+        fprintf(fp,"# torque-launch checkpoint written: %s",ctime(&curtime));
         for (i = 0; i < t->nall; ++i) {
-            prefix = (t->task[i].status == TASK_COMPLETE) ? "# " : " ";
-            suffix = (t->task[i].status == TASK_RUNNING) ? "# R" : " ";
-            fprintf(fp,"%s%s%s",prefix,t->task[i].cmd,suffix);
+            prefix = suffix = "";
+            cmd = task[i].cmd;
+            len = strlen(cmd);
+            cmd[len] = '\0';
+            if (t->task[i].status == TASK_COMPLETE)
+                prefix = "# ";
+            else if (t->task[i].status == TASK_RUNNING)
+                suffix = "#R";
+            else if (t->task[i].status == TASK_PENDING)
+                suffix = "#P";
+            else if (t->task[i].status == TASK_FAILED)
+                suffix = "#F";
+            fprintf(fp,"%s%s%s\n",prefix,t->task[i].cmd,suffix);
         }
         fclose(fp);
     }
