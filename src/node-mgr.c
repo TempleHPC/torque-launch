@@ -27,6 +27,8 @@ static const char *status[] = {
     "idle", "exec", "busy", NULL
 };
 
+/* ---------------------------------------- */
+
 node_mgr_t *node_mgr_init()
 {
     int i;
@@ -58,6 +60,7 @@ node_mgr_t *node_mgr_init()
     return n;
 }
 
+/* ---------------------------------------- */
 
 void node_mgr_exit(node_mgr_t *n)
 {
@@ -68,6 +71,7 @@ void node_mgr_exit(node_mgr_t *n)
     free((void *)n);
 }
 
+/* ---------------------------------------- */
 
 tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
 {
@@ -113,6 +117,7 @@ tm_node_id node_mgr_run(node_mgr_t *n, task_t *t)
     else return TM_ERROR_NODE;
 }
 
+/* ---------------------------------------- */
 
 int node_mgr_schedule(node_mgr_t *n)
 {
@@ -159,6 +164,7 @@ int node_mgr_schedule(node_mgr_t *n)
     return 0;
 }
 
+/* ---------------------------------------- */
 
 int node_mgr_nall(node_mgr_t *n)
 {
@@ -166,6 +172,7 @@ int node_mgr_nall(node_mgr_t *n)
     return n->nall;
 }
 
+/* ---------------------------------------- */
 
 int node_mgr_nidle(node_mgr_t *n)
 {
@@ -173,6 +180,7 @@ int node_mgr_nidle(node_mgr_t *n)
     return (n->nall - n->nrun);
 }
 
+/* ---------------------------------------- */
 
 void node_mgr_print(node_mgr_t *n)
 {
@@ -190,6 +198,7 @@ void node_mgr_print(node_mgr_t *n)
         }
     }
 }
+
 /*
  * Local Variables:
  * c-basic-offset: 4

@@ -22,6 +22,8 @@ static const char *status[] = {
     "pending", "running", "complete", "failed", NULL
 };
 
+/* ---------------------------------------- */
+
 task_mgr_t *task_mgr_init(int num)
 {
     task_mgr_t *t = (task_mgr_t *)malloc(sizeof(task_mgr_t));
@@ -37,6 +39,7 @@ task_mgr_t *task_mgr_init(int num)
     return t;
 }
 
+/* ---------------------------------------- */
 
 void task_mgr_exit(task_mgr_t *t)
 {
@@ -53,6 +56,7 @@ void task_mgr_exit(task_mgr_t *t)
     }
 }
 
+/* ---------------------------------------- */
 
 int task_mgr_add(task_mgr_t *t, const char *cmd)
 {
@@ -79,6 +83,7 @@ int task_mgr_add(task_mgr_t *t, const char *cmd)
     return 0;
 }
 
+/* ---------------------------------------- */
 
 int task_mgr_nall(task_mgr_t *t)
 {
@@ -86,6 +91,7 @@ int task_mgr_nall(task_mgr_t *t)
     return t->nall;
 }
 
+/* ---------------------------------------- */
 
 int task_mgr_todo(task_mgr_t *t)
 {
@@ -93,6 +99,7 @@ int task_mgr_todo(task_mgr_t *t)
     return t->nall - t->nlast;
 }
 
+/* ---------------------------------------- */
 
 task_t *task_mgr_next(task_mgr_t *t)
 {
@@ -106,17 +113,20 @@ task_t *task_mgr_next(task_mgr_t *t)
     return NULL;
 }
 
+/* ---------------------------------------- */
 
 void task_mgr_print(task_mgr_t *t)
 {
     int i;
     if (t == NULL) return;
+    printf("============================================================\n");
     for (i = 0; i < t->nall; ++i) {
         printf("%03d/%03d|[%-8s]: %s",i+1,t->nall,
                status[t->task[i].status],t->task[i].cmd);
     }
 }
 
+/* ---------------------------------------- */
 
 void task_mgr_chkpnt(task_mgr_t *t, const char *n)
 {
@@ -137,6 +147,7 @@ void task_mgr_chkpnt(task_mgr_t *t, const char *n)
     }
 }
 
+/* ---------------------------------------- */
 
 void task_done(task_t *t)
 {
@@ -147,6 +158,7 @@ void task_done(task_t *t)
         t->status = TASK_COMPLETE;
 }
 
+/* ---------------------------------------- */
 
 task_mgr_t *task_mgr_reorder(task_mgr_t *t, const int s, const int c)
 {

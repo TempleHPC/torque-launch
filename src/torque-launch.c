@@ -29,6 +29,8 @@ const char *logname = "torque-launch";
 const char *pbsjobid = "(unknown)";
 #endif
 
+/* ---------------------------------------- */
+
 static int usage(const char *argv0)
 {
     printf("\nUsage:  %s [-f|-r|-m|-c <center task #>] "
@@ -41,6 +43,8 @@ static int usage(const char *argv0)
            " -p name : name of checkpoint file\n",argv0);
     return 1;
 }
+
+/* ---------------------------------------- */
 
 int main(int argc, char **argv)
 {
