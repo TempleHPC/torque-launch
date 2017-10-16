@@ -128,11 +128,11 @@ void task_mgr_chkpnt(task_mgr_t *t, const char *n)
     if (fp != NULL) {
         const char *prefix,*suffix;
         time_t curtime = time(NULL);
-        printf("# torque-launch checkpoint file "
+        fprintf(fp,"# torque-launch checkpoint file "
                " written: %s\n",ctime(&curtime));
         for (i = 0; i < t->nall; ++i) {
-            prefix = (t->task[i].status == TASK_COMPLETE) ? "# " : "";
-            suffix = (t->task[i].status == TASK_RUNNING) ? "# R" : "";
+            prefix = (t->task[i].status == TASK_COMPLETE) ? "# " : " ";
+            suffix = (t->task[i].status == TASK_RUNNING) ? "# R" : " ";
             fprintf(fp,"%s%s%s",prefix,t->task[i].cmd,suffix);
         }
         fclose(fp);
