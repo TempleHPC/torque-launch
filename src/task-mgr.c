@@ -19,7 +19,7 @@
 #define TASK_FAILED    3
 
 /** time in seconds between writing checkpoint files */
-#define CHECKPOINT_RATE 300
+#define CHECKPOINT_RATE 30
 
 static const char *status[] = {
     "pending", "running", "complete", "failed", NULL
